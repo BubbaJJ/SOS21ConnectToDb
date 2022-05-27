@@ -4,6 +4,7 @@ import {
   DeleteTodo,
   GetTodoById,
 } from "../../shared/api/TodoAPI";
+import "./TodoList.css";
 import { useState, useEffect } from "react";
 import TodoForm from "../todoform/TodoForm";
 import TodoItem from "../todoitem/TodoItem";
@@ -11,7 +12,6 @@ import Moment from "moment"; // Paket för formattering av bl.a. datum och tid.
 
 const TodoList = () => {
   const [todoList, setTodoList] = useState([]);
-  const [todo, setTodo] = useState({});
 
   const GetTodoListItems = async () => {
     let data = await GetTodoList(); // Hämtar alla Todo items.
@@ -33,7 +33,7 @@ const TodoList = () => {
   }, []); // [] gör att det endast körs en gång.
 
   return (
-    <div>
+    <div className="main-div">
       <h1>Add new todo</h1>
       {/* Formulär för att lägga till nya todo items. */}
       <TodoForm onFormSubmit={handleFormSubmit} />
@@ -41,7 +41,7 @@ const TodoList = () => {
       <table>
         <thead>
           <tr>
-            <th>Todo</th>
+            <th>Task</th>
             <th>Completed</th>
             <th>Date added</th>
             <th>Due date</th>
