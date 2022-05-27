@@ -38,41 +38,45 @@ const TodoList = () => {
       {/* Formulär för att lägga till nya todo items. */}
       <TodoForm onFormSubmit={handleFormSubmit} />
       <h1>All todo Items</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>Task</th>
-            <th>Completed</th>
-            <th>Date added</th>
-            <th>Due date</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {todoList.map(
-            // Loopar igenom todoList och skapar en tabellrad för varje item.
-            (todo) => (
-              <tr key={todo.id}>
-                <td>{todo.name}</td>
-                {/* Om todo.completed är true så ska "Yes" skrivas ut, annars ska "No" skrivas ut. */}
-                <td>{todo.completed ? "Yes" : "No"}</td>
-                <td>{Moment(todo.dateAdded).format("MMM Do YYYY")}</td>
-                <td>{Moment(todo.dueDate).format("MMM Do YYYY")}</td>
-                <td>
-                  <button
-                    onClick={() => {
-                      handleDeleteTodo(todo);
-                      GetTodoListItems();
-                    }}
-                  >
-                    Remove
-                  </button>
-                </td>
-              </tr>
-            )
-          )}
-        </tbody>
-      </table>
+      {todoList.length > 0 ? (
+        <table>
+          <thead>
+            <tr>
+              <th>Task</th>
+              <th>Completed</th>
+              <th>Date added</th>
+              <th>Due date</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {todoList.map(
+              // Loopar igenom todoList och skapar en tabellrad för varje item.
+              (todo) => (
+                <tr key={todo.id}>
+                  <td>{todo.name}</td>
+                  {/* Om todo.completed är true så ska "Yes" skrivas ut, annars ska "No" skrivas ut. */}
+                  <td>{todo.completed ? "Yes" : "No"}</td>
+                  <td>{Moment(todo.dateAdded).format("MMM Do YYYY")}</td>
+                  <td>{Moment(todo.dueDate).format("MMM Do YYYY")}</td>
+                  <td>
+                    <button
+                      onClick={() => {
+                        handleDeleteTodo(todo);
+                        GetTodoListItems();
+                      }}
+                    >
+                      Remove
+                    </button>
+                  </td>
+                </tr>
+              )
+            )}
+          </tbody>
+        </table>
+      ) : (
+        <h2>No todos found.</h2>
+      )}
       <h1>Find todo by id</h1>
       <TodoItem />
     </div>
