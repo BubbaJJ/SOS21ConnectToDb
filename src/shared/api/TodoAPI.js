@@ -13,7 +13,7 @@ export const CreateTodo = async (todo) => {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
-      name: todo.name,
+      Name: todo.name,
     }),
   });
   return await response.json();
