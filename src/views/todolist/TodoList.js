@@ -1,85 +1,63 @@
+import { message, Layout, Tabs, Row, Col } from "antd";
+import { useEffect, useState } from "react";
 import {
   GetTodoList,
   CreateTodo,
+  UpdateTodo,
   DeleteTodo,
-  GetTodoById,
 } from "../../shared/api/TodoAPI";
-import "./TodoList.css";
-import { useState, useEffect } from "react";
 import TodoForm from "../todoform/TodoForm";
-import TodoItem from "../todoitem/TodoItem";
-import Moment from "moment"; // Paket för formattering av bl.a. datum och tid.
+import TodoTab from "../todotab/TodoTab";
+const { Content } = Layout;
+const { TabPane } = Tabs;
 
 const TodoList = () => {
   const [todoList, setTodoList] = useState([]);
+  const [activeTodos, setActiveTodos] = useState([]);
+  const [completedTodos, setCompletedTodos] = useState([]);
 
-  const GetTodoListItems = async () => {
-    let data = await GetTodoList(); // Hämtar alla Todo items.
-    setTodoList(data); // Tilldelar data till todoList.
-  };
-
-  const handleFormSubmit = (todo) => {
-    CreateTodo(todo); // Skickar en ny todo till vårat  API.
-    alert("Todo created!");
-  };
-
-  const handleDeleteTodo = (todo) => {
-    DeleteTodo(todo); // Tar bort en todo.
-    alert("Todo deleted!");
+  const refreshTodos = () => {
+    GetTodoList().then((json) => {
+      setTodoList(json);
+      setActiveTodos(json.filter((todo) => !todo.completed));
+      setCompletedTodos(json.filter((todo) => todo.completed));
+    });
   };
 
   useEffect(() => {
-    GetTodoListItems(); // Hämtar alla Todo items när sidan laddar.
-  }, []); // [] gör att det endast körs en gång.
+    refreshTodos();
+  }, []);
+
+  const handleFormSubmit = (todo) => {
+    console.log(todo);
+    CreateTodo(todo);
+    message.success("Todo created successfully!");
+  };
 
   return (
-    <div className="main-div">
-      <h1>Add new todo</h1>
-      {/* Formulär för att lägga till nya todo items. */}
-      <TodoForm onFormSubmit={handleFormSubmit} />
-      <h1>All todo Items</h1>
-      {todoList.length > 0 ? (
-        <table>
-          <thead>
-            <tr>
-              <th>Task</th>
-              <th>Completed</th>
-              <th>Date added</th>
-              <th>Due date</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {todoList.map(
-              // Loopar igenom todoList och skapar en tabellrad för varje item.
-              (todo) => (
-                <tr key={todo.id}>
-                  <td>{todo.name}</td>
-                  {/* Om todo.completed är true så ska "Yes" skrivas ut, annars ska "No" skrivas ut. */}
-                  <td>{todo.completed ? "Yes" : "No"}</td>
-                  <td>{Moment(todo.dateAdded).format("MMM Do YYYY")}</td>
-                  <td>{Moment(todo.dueDate).format("MMM Do YYYY")}</td>
-                  <td>
-                    <button
-                      onClick={() => {
-                        handleDeleteTodo(todo);
-                        GetTodoListItems();
-                      }}
-                    >
-                      Remove
-                    </button>
-                  </td>
-                </tr>
-              )
-            )}
-          </tbody>
-        </table>
-      ) : (
-        <h2>No todos found.</h2>
-      )}
-      <h1>Find todo by id</h1>
-      <TodoItem />
-    </div>
+    <Layout>
+      <Content>
+        <div className="todo-list">
+          <Row>
+            <Col>
+              <TodoForm onFormSubmit={handleFormSubmit} />
+              <br />
+              <Tabs defaultActiveKey="active">
+                <TabPane tab="All" key="all">
+                  <TodoTab todos={todoList} />
+                </TabPane>
+                <TabPane tab="Active" key="active">
+                  <TodoTab todos={activeTodos} />
+                </TabPane>
+                <TabPane tab="Completed" key="completed">
+                  <TodoTab todos={completedTodos} />
+                </TabPane>
+              </Tabs>
+            </Col>
+          </Row>
+        </div>
+      </Content>
+    </Layout>
   );
 };
 

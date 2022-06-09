@@ -1,20 +1,35 @@
-import { useState } from "react";
+import { Form, Row, Col, Button, Input } from "antd";
 
 const TodoForm = ({ onFormSubmit }) => {
-  const [value, setValue] = useState("");
-  const handleSubmit = () => {
-    onFormSubmit({ name: value });
+  const [form] = Form.useForm();
+
+  const onFinish = () => {
+    onFormSubmit({
+      name: form.getFieldsValue("name"),
+    });
+
+    form.resetFields();
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="Add todo name"
-        onChange={(event) => setValue(event.target.value)}
-      />
-      <button type="submit">Add</button>
-    </form>
+    <Form form={form} onFinish={onFinish}>
+      <Row>
+        <Col>
+          <Form.Item
+            name="name"
+            label="Name"
+            rules={[{ required: true, message: "Required field!" }]}
+          >
+            <Input placeholder="Enter task name" />
+          </Form.Item>
+        </Col>
+        <Col>
+          <Button type="primary" htmlType="submit">
+            Add Todo
+          </Button>
+        </Col>
+      </Row>
+    </Form>
   );
 };
 
